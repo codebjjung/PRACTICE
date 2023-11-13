@@ -1,35 +1,43 @@
-module add(input [3:0] x,
+module adder(
+   input [3:0] x,
    input [3:0] y,
    input cin,
    output [4:0] sum,
-output cout);
+   output cout
+);
 
 assign sum = x^y^cin;
-assign cout = (x&&y) | (y&&z) | (z&&x);
+assign cout = (x&&y) | (y&&cin) | (cin&&x);
 endmodule
 
+module tb;
+logic [3:0] x;
+logic [3:0] y;
+logic cin;
+logic [4:0] sum;
+logic cout;
 
-class myCov;
-   covergroup CovGrp;
-      coverpoint a {
-         bins featureA = {[2:4]};
-         bins featureB = {[8:$]};
+   covergroup covgrp;
+      coverpoint x[3:0] {
+         bins a = {[$:7]};
+         bins b = {[8:$]};
       }
-      coverpoint b {
-         bins featureC = {[1]};
-         bins featureD = {[$:$]};
+      coverpoint cout {
+         bins c = {[$:7]};
+         bins d = {[8:$]};
       }
    endgroup
 
-   function new();
-      CovGrp = new;
-   endfunction
-endclass
-
-module tb_top;
-   myCov myCov0 = new();
+   adder myadder (.x(x), .y(y), .cin(cin), .sum(sum), .cout(cout));
 
    initial begin
-      my_Cov0.CovGrp.sample ();
+      covgrp cg = new();
+      for (int i = 0; i < 5; i++) begin
+         x = $random;
+         y = $random;
+         $display("x = %0d, y = %0d", x, y);
+         cg.sample ();
+      end
+      $display("coverage : %f%%", cg.get_coverage());
    end
 endmodule
