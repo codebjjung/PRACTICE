@@ -22,7 +22,7 @@ logic cout;
          bins a = {[$:7]};
          bins b = {[8:$]};
       }
-      coverpoint cout {
+      coverpoint y[3:0] {
          bins c = {[$:7]};
          bins d = {[8:$]};
       }
@@ -36,7 +36,7 @@ logic cout;
          x = $random;
          y = $random;
          $display("x = %0d, y = %0d", x, y);
-         cg.sample ();
+         cg.sample();
       end
       $display("coverage : %f%%", cg.get_coverage());
    end
