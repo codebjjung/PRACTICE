@@ -30,4 +30,14 @@ class wdt_sfr_test_c extends wdt_base_test_c; // wdt_base_test -> wdt_sfr_test
    endtask
 endclass
 
+task wdt_sfr_test_c::wdt_sfr_reset_check(bit [31:0] addr, bit [31:0] exp, bit [31:0] mask);
+   
+   bit [31:0] rdata;
+   safe_read(addr, rdata);
 
+   if((rdata & mask) == (exp & mask)) begin
+      `DFD_INFO("RESET_VALUE_CHECK", "[PASS] RESET VALUE CHECK SUCCESS");
+   end else begin
+      `DFD_ERROR("RESET_VALUE_CHECK", "[FAIL] RESET VALUE CHECK FAIL == rdata = %0h". rdata);
+   end
+endtask: wdt_sfr_reset_check;
